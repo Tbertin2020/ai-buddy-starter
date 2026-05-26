@@ -102,9 +102,40 @@ function LeafletMap({
   values: { district_id: string; value: number; year: number }[];
   unit: string;
 }) {
-  // Dynamic import so SSR doesn't break
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { MapContainer, TileLayer, CircleMarker, Tooltip } = require("react-leaflet");
+  const [mods, setMods] = useState<{
+    MapContainer: React.ComponentType<Record<string, unknown>>;
+    TileLayer: React.ComponentType<Record<string, unknown>>;
+    CircleMarker: React.ComponentType<Record<string, unknown>>;
+    Tooltip: React.ComponentType<Record<string, unknown>>;
+  } | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const rl = await import("react-leaflet");
+      if (!cancelled) {
+        setMods({
+          MapContainer: rl.MapContainer as never,
+          TileLayer: rl.TileLayer as never,
+          CircleMarker: rl.CircleMarker as never,
+          Tooltip: rl.Tooltip as never,
+        });
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (!mods) {
+    return (
+      <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm">
+        Loading map…
+      </div>
+    );
+  }
+
+  const { MapContainer, TileLayer, CircleMarker, Tooltip } = mods;
   const valueMap = new Map(values.map((v) => [v.district_id, v]));
   const max = Math.max(...values.map((v) => v.value));
   const min = Math.min(...values.map((v) => v.value));
