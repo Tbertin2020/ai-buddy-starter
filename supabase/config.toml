@@ -1,0 +1,4 @@
+project_id = "vnbkuthyscfxuqvjplza"
+
+[functions.predict-trend]
+verify_jwt = false

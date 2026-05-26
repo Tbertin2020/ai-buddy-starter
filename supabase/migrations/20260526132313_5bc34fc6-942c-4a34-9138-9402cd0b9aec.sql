@@ -1,0 +1,1 @@
+-- See /tmp/full_migration.sql for full content; passing via Python below not possible; embedded here.
