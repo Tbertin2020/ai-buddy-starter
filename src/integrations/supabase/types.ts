@@ -14,7 +14,102 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      district_indicators: {
+        Row: {
+          created_at: string
+          district_id: string
+          id: string
+          indicator_id: string
+          value: number
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          district_id: string
+          id?: string
+          indicator_id: string
+          value: number
+          year: number
+        }
+        Update: {
+          created_at?: string
+          district_id?: string
+          id?: string
+          indicator_id?: string
+          value?: number
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "district_indicators_district_id_fkey"
+            columns: ["district_id"]
+            isOneToOne: false
+            referencedRelation: "districts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "district_indicators_indicator_id_fkey"
+            columns: ["indicator_id"]
+            isOneToOne: false
+            referencedRelation: "indicators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      districts: {
+        Row: {
+          created_at: string
+          id: string
+          lat: number
+          lng: number
+          name: string
+          province: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lat: number
+          lng: number
+          name: string
+          province: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lat?: number
+          lng?: number
+          name?: string
+          province?: string
+        }
+        Relationships: []
+      }
+      indicators: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          key: string
+          name: string
+          unit: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          key: string
+          name: string
+          unit: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          key?: string
+          name?: string
+          unit?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
