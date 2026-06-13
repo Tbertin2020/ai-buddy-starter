@@ -24,7 +24,6 @@ import {
   Legend,
 } from "recharts";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/predict")({ component: Predict });
 
@@ -61,23 +60,27 @@ function Predict() {
     setForecast(null);
     setInsight("");
     try {
-      const { data, error } = await supabase.functions.invoke("predict-trend", {
-        body: {
+      const token = localStorage.getItem("token");
+      const res = await fetch("http://localhost/rwandadb-api/predict.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
           districtName: district.name,
           indicatorName: indicator.name,
           unit: indicator.unit,
           history: series.data,
           forecastYears: 3,
-        },
+        }),
       });
-      if (error) {
-        const status = (error as { context?: { status?: number } }).context?.status;
-        if (status === 429) toast.error("Rate limit reached. Wait a moment and try again.");
-        else if (status === 402) toast.error("AI credits exhausted. Add credits to your workspace.");
-        else toast.error("Forecast failed: " + (error.message || "unknown"));
-        return;
+      
+      if (!res.ok) {
+        throw new Error("Failed to generate forecast from PHP API");
       }
-      const r = data as { forecast: Forecast[]; insight: string };
+      
+      const r = await res.json() as { forecast: Forecast[]; insight: string };
       setForecast(r.forecast);
       setInsight(r.insight);
     } catch (e) {

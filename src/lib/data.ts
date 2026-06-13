@@ -1,5 +1,3 @@
-import { supabase } from "@/integrations/supabase/client";
-
 export type District = {
   id: string;
   name: string;
@@ -23,57 +21,89 @@ export type DistrictIndicator = {
   value: number;
 };
 
+const API_BASE_URL = "http://localhost/rwandadb-api";
+
+function getHeaders() {
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+  };
+}
+
 export async function fetchDistricts(): Promise<District[]> {
-  const { data, error } = await supabase
-    .from("districts")
-    .select("*")
-    .order("name");
-  if (error) throw error;
-  return data as District[];
+  const res = await fetch(`${API_BASE_URL}/districts.php`, {
+    headers: getHeaders(),
+  });
+  if (!res.ok) {
+    if (res.status === 401) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
+    }
+    throw new Error("Failed to fetch districts");
+  }
+  return res.json();
 }
 
 export async function fetchIndicators(): Promise<Indicator[]> {
-  const { data, error } = await supabase
-    .from("indicators")
-    .select("*")
-    .order("category");
-  if (error) throw error;
-  return data as Indicator[];
+  const res = await fetch(`${API_BASE_URL}/indicators.php`, {
+    headers: getHeaders(),
+  });
+  if (!res.ok) {
+    if (res.status === 401) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
+    }
+    throw new Error("Failed to fetch indicators");
+  }
+  return res.json();
 }
 
 export async function fetchSeries(
   districtId: string,
   indicatorId: string,
 ): Promise<{ year: number; value: number }[]> {
-  const { data, error } = await supabase
-    .from("district_indicators")
-    .select("year,value")
-    .eq("district_id", districtId)
-    .eq("indicator_id", indicatorId)
-    .order("year");
-  if (error) throw error;
-  return (data as { year: number; value: number }[]).map((r) => ({
-    year: r.year,
-    value: Number(r.value),
-  }));
+  const res = await fetch(
+    `${API_BASE_URL}/series.php?district_id=${encodeURIComponent(
+      districtId,
+    )}&indicator_id=${encodeURIComponent(indicatorId)}`,
+    {
+      headers: getHeaders(),
+    },
+  );
+  if (!res.ok) {
+    if (res.status === 401) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
+    }
+    throw new Error("Failed to fetch series");
+  }
+  return res.json();
 }
 
 export async function fetchLatestForIndicator(
   indicatorId: string,
 ): Promise<{ district_id: string; value: number; year: number }[]> {
-  const { data, error } = await supabase
-    .from("district_indicators")
-    .select("district_id,year,value")
-    .eq("indicator_id", indicatorId)
-    .order("year", { ascending: false });
-  if (error) throw error;
-  const seen = new Set<string>();
-  const out: { district_id: string; year: number; value: number }[] = [];
-  for (const r of data as { district_id: string; year: number; value: number }[]) {
-    if (!seen.has(r.district_id)) {
-      seen.add(r.district_id);
-      out.push({ ...r, value: Number(r.value) });
+  const res = await fetch(
+    `${API_BASE_URL}/latest.php?indicator_id=${encodeURIComponent(indicatorId)}`,
+    {
+      headers: getHeaders(),
+    },
+  );
+  if (!res.ok) {
+    if (res.status === 401) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
     }
+    throw new Error("Failed to fetch latest data");
   }
-  return out;
+  return res.json();
 }

@@ -6,7 +6,10 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  useNavigate,
+  useLocation,
 } from "@tanstack/react-router";
+import { useEffect } from "react";
 
 import appCss from "../styles.css?url";
 import { AppToaster } from "@/components/AppToaster";
@@ -109,6 +112,15 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token && location.pathname !== "/login") {
+      navigate({ to: "/login" });
+    }
+  }, [location.pathname, navigate]);
 
   return (
     <QueryClientProvider client={queryClient}>

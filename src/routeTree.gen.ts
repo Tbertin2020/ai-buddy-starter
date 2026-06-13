@@ -11,8 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PredictRouteImport } from './routes/predict'
 import { Route as MapRouteImport } from './routes/map'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as CompareRouteImport } from './routes/compare'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 
 const PredictRoute = PredictRouteImport.update({
@@ -25,6 +27,11 @@ const MapRoute = MapRouteImport.update({
   path: '/map',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExploreRoute = ExploreRouteImport.update({
   id: '/explore',
   path: '/explore',
@@ -35,6 +42,11 @@ const CompareRoute = CompareRouteImport.update({
   path: '/compare',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -43,38 +55,61 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/compare': typeof CompareRoute
   '/explore': typeof ExploreRoute
+  '/login': typeof LoginRoute
   '/map': typeof MapRoute
   '/predict': typeof PredictRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/compare': typeof CompareRoute
   '/explore': typeof ExploreRoute
+  '/login': typeof LoginRoute
   '/map': typeof MapRoute
   '/predict': typeof PredictRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/compare': typeof CompareRoute
   '/explore': typeof ExploreRoute
+  '/login': typeof LoginRoute
   '/map': typeof MapRoute
   '/predict': typeof PredictRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/compare' | '/explore' | '/map' | '/predict'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/compare'
+    | '/explore'
+    | '/login'
+    | '/map'
+    | '/predict'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/compare' | '/explore' | '/map' | '/predict'
-  id: '__root__' | '/' | '/compare' | '/explore' | '/map' | '/predict'
+  to: '/' | '/admin' | '/compare' | '/explore' | '/login' | '/map' | '/predict'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/compare'
+    | '/explore'
+    | '/login'
+    | '/map'
+    | '/predict'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   CompareRoute: typeof CompareRoute
   ExploreRoute: typeof ExploreRoute
+  LoginRoute: typeof LoginRoute
   MapRoute: typeof MapRoute
   PredictRoute: typeof PredictRoute
 }
@@ -95,6 +130,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MapRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/explore': {
       id: '/explore'
       path: '/explore'
@@ -109,6 +151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CompareRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -121,8 +170,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   CompareRoute: CompareRoute,
   ExploreRoute: ExploreRoute,
+  LoginRoute: LoginRoute,
   MapRoute: MapRoute,
   PredictRoute: PredictRoute,
 }
