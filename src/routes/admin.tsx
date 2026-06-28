@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { toast } from "sonner";
 import { 
   Users, 
@@ -45,6 +45,7 @@ type District = {
   province: string;
   lat: number;
   lng: number;
+  is_hidden?: number;
   created_at?: string;
 };
 
@@ -611,6 +612,7 @@ function DistrictsTab() {
   const [province, setProvince] = useState("");
   const [lat, setLat] = useState("");
   const [lng, setLng] = useState("");
+  const [isHidden, setIsHidden] = useState(0);
 
   // Query
   const districtsQuery = useQuery<District[]>({
@@ -688,6 +690,7 @@ function DistrictsTab() {
     setProvince("");
     setLat("");
     setLng("");
+    setIsHidden(0);
   };
 
   const handleEdit = (d: District) => {
@@ -696,12 +699,13 @@ function DistrictsTab() {
     setProvince(d.province);
     setLat(String(d.lat));
     setLng(String(d.lng));
+    setIsHidden(d.is_hidden ?? 0);
     setIsOpen(true);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const data = { name, province, lat: parseFloat(lat), lng: parseFloat(lng) };
+    const data = { name, province, lat: parseFloat(lat), lng: parseFloat(lng), is_hidden: isHidden };
     if (editingDistrict) {
       updateMutation.mutate({ id: editingDistrict.id, ...data });
     } else {
@@ -710,7 +714,7 @@ function DistrictsTab() {
   };
 
   const handleDelete = (id: string, name: string) => {
-    if (confirm(`Are you sure you want to delete district "${name}"? All numerical data records associated with this district will also be deleted.`)) {
+    if (confirm(`Warning: If this district is deleted, users will not be able to access its statistical data. Are you sure you want to delete district "${name}"?`)) {
       deleteMutation.mutate(id);
     }
   };
@@ -768,9 +772,14 @@ function DistrictsTab() {
                 ) : (
                   filtered.map((d) => (
                     <tr key={d.id} className="hover:bg-accent/40 text-foreground transition-colors">
-                      <td className="py-3.5 px-4 font-semibold flex items-center gap-1.5">
+                      <td className="py-3.5 px-4 font-semibold flex items-center gap-1.5 flex-wrap">
                         <MapPin className="w-4 h-4 text-blue-500" />
-                        {d.name}
+                        <span>{d.name}</span>
+                        {d.is_hidden === 1 && (
+                          <span className="ml-2 px-1.5 py-0.5 text-[9px] font-bold rounded-full bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
+                            Hidden
+                          </span>
+                        )}
                       </td>
                       <td className="py-3.5 px-4 text-muted-foreground">{d.province}</td>
                       <td className="py-3.5 px-4 text-muted-foreground font-mono text-xs">{d.lat.toFixed(4)}</td>
@@ -841,6 +850,23 @@ function DistrictsTab() {
                   <div className="space-y-1">
                     <Label htmlFor="dst-lng" className="text-xs">Longitude</Label>
                     <Input id="dst-lng" type="number" step="any" value={lng} onChange={(e) => setLng(e.target.value)} required placeholder="e.g. 30.0606" className="text-xs bg-muted" />
+                  </div>
+                </div>
+                <div className="flex items-start gap-2 pt-2">
+                  <input
+                    type="checkbox"
+                    id="dst-hidden"
+                    checked={isHidden === 1}
+                    onChange={(e) => setIsHidden(e.target.checked ? 1 : 0)}
+                    className="h-4 w-4 rounded border-input bg-muted text-primary focus:ring-primary/20 accent-blue-600 cursor-pointer"
+                  />
+                  <div className="space-y-0.5">
+                    <Label htmlFor="dst-hidden" className="text-xs font-semibold text-foreground cursor-pointer select-none">
+                      Hide District Data
+                    </Label>
+                    <p className="text-[9px] text-muted-foreground">
+                      If checked, this district's statistical data will be hidden from public dashboard and explore views.
+                    </p>
                   </div>
                 </div>
               </CardContent>

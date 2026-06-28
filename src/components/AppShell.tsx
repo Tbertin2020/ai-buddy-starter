@@ -15,7 +15,6 @@ const nav = [
   { to: "/", label: "Dashboard", icon: BarChart3 },
   { to: "/explore", label: "Districts", icon: Database },
   { to: "/compare", label: "Compare", icon: GitCompare },
-  { to: "/map", label: "Map", icon: MapIcon },
   { to: "/predict", label: "AI Predictions", icon: Sparkles },
 ];
 
