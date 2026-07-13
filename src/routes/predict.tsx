@@ -207,6 +207,14 @@ function Predict() {
                 {insight}
               </div>
             )}
+            {recommendation && (
+              <div className="mt-3 p-4 rounded-md border-l-4 border-primary bg-primary/5 text-sm">
+                <p className="text-xs uppercase tracking-widest text-primary mb-2">
+                  Recommendation
+                </p>
+                {recommendation}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
