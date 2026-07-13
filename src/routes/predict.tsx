@@ -53,12 +53,14 @@ function Predict() {
   const [loading, setLoading] = useState(false);
   const [forecast, setForecast] = useState<Forecast[] | null>(null);
   const [insight, setInsight] = useState<string>("");
+  const [recommendation, setRecommendation] = useState<string>("");
 
   async function runForecast() {
     if (!series.data?.length || !district || !indicator) return;
     setLoading(true);
     setForecast(null);
     setInsight("");
+    setRecommendation("");
     try {
       const token = localStorage.getItem("token");
       const res = await fetch("http://localhost/rwandadb-api/predict.php", {
@@ -80,9 +82,10 @@ function Predict() {
         throw new Error("Failed to generate forecast from PHP API");
       }
       
-      const r = await res.json() as { forecast: Forecast[]; insight: string };
+      const r = await res.json() as { forecast: Forecast[]; insight: string; recommendation?: string };
       setForecast(r.forecast);
       setInsight(r.insight);
+      setRecommendation(r.recommendation ?? "");
     } catch (e) {
       toast.error("Forecast failed: " + (e instanceof Error ? e.message : "unknown"));
     } finally {
@@ -202,6 +205,14 @@ function Predict() {
                   AI Insight
                 </p>
                 {insight}
+              </div>
+            )}
+            {recommendation && (
+              <div className="mt-3 p-4 rounded-md border-l-4 border-primary bg-primary/5 text-sm">
+                <p className="text-xs uppercase tracking-widest text-primary mb-2">
+                  Recommendation
+                </p>
+                {recommendation}
               </div>
             )}
           </CardContent>

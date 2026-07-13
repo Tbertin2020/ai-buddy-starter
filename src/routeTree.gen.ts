@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as PredictRouteImport } from './routes/predict'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForecastUploadRouteImport } from './routes/forecast-upload'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -30,6 +31,11 @@ const MapRoute = MapRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForecastUploadRoute = ForecastUploadRouteImport.update({
+  id: '/forecast-upload',
+  path: '/forecast-upload',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreRoute = ExploreRouteImport.update({
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/compare': typeof CompareRoute
   '/explore': typeof ExploreRoute
+  '/forecast-upload': typeof ForecastUploadRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
   '/predict': typeof PredictRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/compare': typeof CompareRoute
   '/explore': typeof ExploreRoute
+  '/forecast-upload': typeof ForecastUploadRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
   '/predict': typeof PredictRoute
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/compare': typeof CompareRoute
   '/explore': typeof ExploreRoute
+  '/forecast-upload': typeof ForecastUploadRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
   '/predict': typeof PredictRoute
@@ -88,17 +97,27 @@ export interface FileRouteTypes {
     | '/admin'
     | '/compare'
     | '/explore'
+    | '/forecast-upload'
     | '/login'
     | '/map'
     | '/predict'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/compare' | '/explore' | '/login' | '/map' | '/predict'
+  to:
+    | '/'
+    | '/admin'
+    | '/compare'
+    | '/explore'
+    | '/forecast-upload'
+    | '/login'
+    | '/map'
+    | '/predict'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/compare'
     | '/explore'
+    | '/forecast-upload'
     | '/login'
     | '/map'
     | '/predict'
@@ -109,6 +128,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   CompareRoute: typeof CompareRoute
   ExploreRoute: typeof ExploreRoute
+  ForecastUploadRoute: typeof ForecastUploadRoute
   LoginRoute: typeof LoginRoute
   MapRoute: typeof MapRoute
   PredictRoute: typeof PredictRoute
@@ -135,6 +155,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forecast-upload': {
+      id: '/forecast-upload'
+      path: '/forecast-upload'
+      fullPath: '/forecast-upload'
+      preLoaderRoute: typeof ForecastUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/explore': {
@@ -173,6 +200,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   CompareRoute: CompareRoute,
   ExploreRoute: ExploreRoute,
+  ForecastUploadRoute: ForecastUploadRoute,
   LoginRoute: LoginRoute,
   MapRoute: MapRoute,
   PredictRoute: PredictRoute,
@@ -180,13 +208,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
