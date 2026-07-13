@@ -60,6 +60,7 @@ function Predict() {
     setLoading(true);
     setForecast(null);
     setInsight("");
+    setRecommendation("");
     try {
       const token = localStorage.getItem("token");
       const res = await fetch("http://localhost/rwandadb-api/predict.php", {
@@ -81,9 +82,10 @@ function Predict() {
         throw new Error("Failed to generate forecast from PHP API");
       }
       
-      const r = await res.json() as { forecast: Forecast[]; insight: string };
+      const r = await res.json() as { forecast: Forecast[]; insight: string; recommendation?: string };
       setForecast(r.forecast);
       setInsight(r.insight);
+      setRecommendation(r.recommendation ?? "");
     } catch (e) {
       toast.error("Forecast failed: " + (e instanceof Error ? e.message : "unknown"));
     } finally {
