@@ -53,6 +53,7 @@ function Predict() {
   const [loading, setLoading] = useState(false);
   const [forecast, setForecast] = useState<Forecast[] | null>(null);
   const [insight, setInsight] = useState<string>("");
+  const [recommendation, setRecommendation] = useState<string>("");
 
   async function runForecast() {
     if (!series.data?.length || !district || !indicator) return;
