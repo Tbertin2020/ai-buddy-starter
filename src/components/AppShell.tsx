@@ -8,6 +8,7 @@ import {
   Database,
   LogOut,
   ShieldCheck,
+  Upload,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +17,7 @@ const nav = [
   { to: "/explore", label: "Districts", icon: Database },
   { to: "/compare", label: "Compare", icon: GitCompare },
   { to: "/predict", label: "AI Predictions", icon: Sparkles },
+  { to: "/forecast-upload", label: "Upload & Forecast", icon: Upload },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
