@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import type { ReactNode } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import {
   BarChart3,
   Map as MapIcon,
@@ -23,7 +23,13 @@ const nav = [
 export function AppShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const userStr = typeof window !== "undefined" ? localStorage.getItem("user") : null;
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const userStr = mounted && typeof window !== "undefined" ? localStorage.getItem("user") : null;
   const user = userStr ? JSON.parse(userStr) : null;
 
   const handleSignOut = () => {
