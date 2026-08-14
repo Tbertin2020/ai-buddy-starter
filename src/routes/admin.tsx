@@ -1383,7 +1383,7 @@ function NumbersTab() {
                   {tableData.length === 0 ? (
                     <tr>
                       <td colSpan={5} className="py-8 text-center text-muted-foreground">
-                        No records match your query filters.
+                        No records match your query filters
                       </td>
                     </tr>
                   ) : (
